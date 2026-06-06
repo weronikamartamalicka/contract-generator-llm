@@ -1,6 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel
-from decimal import Decimal
+from dataclasses import dataclass
 
 class CooperationType(str, Enum):
     INFLUENCER_COLLABORATION = "INFLUENCER_COLLABORATION"
@@ -30,8 +30,13 @@ class CompanyDetails(BaseModel):
     email : str
     address : Address
 
-
 class OfferData(BaseModel):
     cooperation_type : CooperationType
     amount : Amount
     company_details : CompanyDetails
+
+@dataclass
+class RawDocument():
+    source_format : str
+    text : str
+    source_name : str
