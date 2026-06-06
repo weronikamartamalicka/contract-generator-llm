@@ -7,15 +7,13 @@ class Parser(Protocol):
     def parse(self, path: str) -> RawDocument | None : ...
 
 class DocxParser:
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = logging.getLogger(__name__)
 
     def parse(self, path: str) -> RawDocument | None:
-        text = ""
         try:
             doc = docx.Document(path)
-            for paragraph in doc.paragraphs:
-                text += paragraph.text + "\n"
+            text = "\n".join(paragraph.text for paragraph in doc.paragraphs)
         except Exception as e:
             self.logger.error("Error parsing docx file %s: %s", path, e)
         else:
