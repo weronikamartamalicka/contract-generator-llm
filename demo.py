@@ -1,5 +1,5 @@
 import dotenv
-from contractforge.contracts import RawDocument
+from contractforge.bricks.ingest import DocxParser
 from contractforge.bricks.extract import LLMExtractor
 import logging
 
@@ -16,11 +16,10 @@ def setup_logging():
 def main() :
     dotenv.load_dotenv()
     setup_logging()
-    raw = RawDocument(
-        source_format = "docx",
-        text = "Przedstawiamy ofertę stałej, comiesięsznej współpracy influencerskiej na kwotę 14 250 zł netto. Klientem jest Alior Bank SP. z O.O. ulica Olesińska 7/15 02-594 Warszawa. W razie potrzby kontaktu, adres mailwy to alior@bank.com",
-        source_name = "offer.docx")
-    
+    raw = DocxParser().parse("test.docx")
+    if raw is None:
+        logging.error("Failed to parse docx file")
+        return
     offer_data = LLMExtractor().extract(raw)
     print(offer_data)
 
