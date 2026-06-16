@@ -7,7 +7,7 @@ import logging
 TEST_API_KEY = "abcde12345abcde12345"
 
 class RegistryAdapter(Protocol):
-    def enrich(self, offer_data : OfferData):...
+    def enrich(self, nip : str) -> CompanyDetails | None:...
 
 class RegonAdapter:
     def __init__(self):
@@ -15,17 +15,17 @@ class RegonAdapter:
         self.api = RegonAPI(bir_version="bir1.1", is_production=False)
         self.api.authenticate(key=TEST_API_KEY)
 
-    def enrich(self, offer_data : OfferData):
-        nip = offer_data.company_details.nip
+    def enrich(self, nip : str) -> CompanyDetails | None:
         try:
             results = self.api.searchData(nip=nip)
         except Exception as e:
             self.logger.error("Error querying CompanyDetails for %s: %s", nip, e)
+            return None
         else:
             if results:
                 self.logger.info("Found %s results for nip number: %s in Regon API", len(results), nip)
                 result = results[0]
-                enriched_company_details = CompanyDetails(
+                return CompanyDetails(
                     name=result["Nazwa"],
                     nip=nip,
                     address=Address(
@@ -34,9 +34,9 @@ class RegonAdapter:
                         street=self._parse_street(result=result)
                         )
                     )
-                offer_data.company_details = enriched_company_details
             else:
                 self.logger.info("Found 0 results for nip number: %s in Regon API", nip)
+                return None
             
     def _parse_street(self, result : dict) -> str:
         street = result["Ulica"]
