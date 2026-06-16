@@ -1,8 +1,12 @@
 from openai import OpenAI
+from typing import Protocol
 from contractforge.contracts import OfferData, RawDocument
 import logging
 
-class LLMExtractor:
+class LLMExtractor(Protocol):
+    def extract(self, raw : RawDocument) -> OfferData | None:...
+
+class OpenAIExtractor:
     def __init__(self):
         self.client = OpenAI()
         self.logger = logging.getLogger(__name__)

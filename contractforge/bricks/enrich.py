@@ -1,13 +1,12 @@
 from typing import Protocol
 from RegonAPI import RegonAPI
-from contractforge.contracts import CompanyDetails,Address
-from contractforge.bricks.extract import OfferData
+from contractforge.contracts import CompanyDetails,Address,OfferData
 import logging
 
 TEST_API_KEY = "abcde12345abcde12345"
 
 class RegistryAdapter(Protocol):
-    def enrich(self, nip : str) -> CompanyDetails | None:...
+    def enrich(self, offer_data : OfferData):...
 
 class RegonAdapter:
     def __init__(self):
@@ -15,17 +14,17 @@ class RegonAdapter:
         self.api = RegonAPI(bir_version="bir1.1", is_production=False)
         self.api.authenticate(key=TEST_API_KEY)
 
-    def enrich(self, nip : str) -> CompanyDetails | None:
+    def enrich(self, offer_data : OfferData):
+        nip = offer_data.company_details.nip
         try:
             results = self.api.searchData(nip=nip)
         except Exception as e:
             self.logger.error("Error querying CompanyDetails for %s: %s", nip, e)
-            return None
         else:
             if results:
                 self.logger.info("Found %s results for nip number: %s in Regon API", len(results), nip)
                 result = results[0]
-                return CompanyDetails(
+                enriched = CompanyDetails(
                     name=result["Nazwa"],
                     nip=nip,
                     address=Address(
@@ -34,10 +33,16 @@ class RegonAdapter:
                         street=self._parse_street(result=result)
                         )
                     )
+                self._enrich(offer_data=offer_data, enriched=enriched)
             else:
                 self.logger.info("Found 0 results for nip number: %s in Regon API", nip)
-                return None
-            
+    
+    def _enrich(self, offer_data : OfferData, enriched : CompanyDetails):
+        offer_data.company_details = offer_data.company_details.model_copy(update={
+            "name":enriched.name,
+            "address":enriched.address
+        })
+
     def _parse_street(self, result : dict) -> str:
         street = result["Ulica"]
         if result["NrNieruchomosci"]:
