@@ -27,7 +27,7 @@ class Address(BaseModel):
 class CompanyDetails(BaseModel):
     name : str
     nip : str | None = None
-    email : str
+    email : str | None = None
     address : Address
 
 class OfferData(BaseModel):

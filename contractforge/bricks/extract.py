@@ -3,7 +3,7 @@ from contractforge.contracts import OfferData, RawDocument
 import logging
 
 class LLMExtractor:
-    def __init__(self) -> None:
+    def __init__(self):
         self.client = OpenAI()
         self.logger = logging.getLogger(__name__)
     
@@ -22,11 +22,4 @@ class LLMExtractor:
             self.logger.error("Error extracting offer data %s: %s", raw.source_name, e)
             return None
         else:
-            self.validate(response.output_parsed)
             return response.output_parsed
-
-    def validate(self, offer_data : OfferData | None) -> list[str]:
-        self.logger.info("Validating offer data")
-        if  offer_data is not None and offer_data.company_details.nip is None:
-            self.logger.warning("Offer data is missing NIP number")
-        return ["NIP"]
