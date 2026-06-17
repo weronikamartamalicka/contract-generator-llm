@@ -1,9 +1,8 @@
 import dotenv
 import logging
-from contractforge.configuration.config import AppConfig
-from contractforge.bricks.ingest import DocxParser
-from contractforge.bricks.extract import OpenAIExtractor
-from contractforge.bricks.enrich import RegonAdapter
+import yaml
+
+from contractforge.bricks.build import PipelineBuilder
 
 def setup_logging():
     logging.basicConfig(
@@ -18,7 +17,10 @@ def setup_logging():
 def main() :
     dotenv.load_dotenv()
     setup_logging()
-    config = AppConfig()
+    with open("contractforge/configuration/configuration.yaml", encoding="utf-8") as f:
+        config = yaml.safe_load(f)
+    contract_pipeline = PipelineBuilder().build_pipeline(config=config)
+    contract_pipeline.run("test.docx")
 
    
 if __name__ == "__main__":

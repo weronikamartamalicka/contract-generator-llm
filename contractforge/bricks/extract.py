@@ -7,15 +7,16 @@ class LLMExtractor(Protocol):
     def extract(self, raw : RawDocument) -> OfferData | None:...
 
 class OpenAIExtractor:
-    def __init__(self):
+    def __init__(self, model : str):
         self.client = OpenAI()
         self.logger = logging.getLogger(__name__)
+        self.model=model
     
     def extract(self, raw : RawDocument) -> OfferData | None:
         self.logger.info("Extracting offer data from raw document %s", raw.source_name)
         try:
             response = self.client.responses.parse(
-            model="gpt-4o-mini",
+            model=self.model,
             input=[
                 {"role": "system", "content": "Extract the offer information"},
                 {"role": "user", "content": raw.text},

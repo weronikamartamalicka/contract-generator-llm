@@ -17,3 +17,4 @@ class ContractPipeline:
             offer_data = self.extractor.extract(raw=raw)
             if(offer_data and offer_data.company_details.nip):
                 self.enricher.enrich(offer_data=offer_data)
+                print(offer_data)
