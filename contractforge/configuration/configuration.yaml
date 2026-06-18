@@ -1,5 +1,7 @@
-parser : docx
+partner: olive_media
+parser: docx
 llm:
   provider: openai
   model: gpt-4o-mini
 registry: regon
+resolver: termsresolver

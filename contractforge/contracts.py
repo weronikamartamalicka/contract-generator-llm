@@ -25,15 +25,15 @@ class Address(BaseModel):
     city : str
 
 class CompanyDetails(BaseModel):
-    name : str
+    name : str | None = None
     nip : str | None = None
     email : str | None = None
-    address : Address
+    address : Address | None = None
 
 class OfferData(BaseModel):
-    cooperation_type : CooperationType
-    amount : Amount
-    company_details : CompanyDetails
+    cooperation_type : CooperationType | None = None
+    amount : Amount | None = None
+    company_details : CompanyDetails | None = None
 
 @dataclass
 class RawDocument():
