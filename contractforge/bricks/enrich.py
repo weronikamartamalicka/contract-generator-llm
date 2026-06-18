@@ -16,6 +16,7 @@ class RegonAdapter:
 
     def enrich(self, offer_data : OfferData):
         nip = offer_data.company_details.nip
+        self.logger.info("Starting to retrieve results for nip number: %s in Regon API", nip)
         try:
             results = self.api.searchData(nip=nip)
         except Exception as e:

@@ -12,6 +12,7 @@ def setup_logging():
             logging.FileHandler("log_file.log"),
             logging.StreamHandler(),
         ],
+        force=True
     )
 
 def main() :

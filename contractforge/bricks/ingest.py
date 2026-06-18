@@ -11,6 +11,7 @@ class DocxParser:
         self.logger = logging.getLogger(__name__)
 
     def parse(self, path: str) -> RawDocument | None:
+        self.logger.info("Starting to parse docx file %s", path)
         try:
             doc = docx.Document(path)
             text = "\n".join(paragraph.text for paragraph in doc.paragraphs)
