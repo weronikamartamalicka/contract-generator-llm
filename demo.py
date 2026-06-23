@@ -18,11 +18,14 @@ def setup_logging():
 def main() :
     dotenv.load_dotenv()
     setup_logging()
-    with open("contractforge/configuration/configuration.yaml", encoding="utf-8") as f:
-        config = yaml.safe_load(f)
-    contract_pipeline = PipelineBuilder().build_pipeline(config=config)
-    contract_pipeline.run("test.docx")
+    try:
+        with open("contractforge/configuration/configuration.yaml", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+        contract_pipeline = PipelineBuilder().build_pipeline(config=config)
+        contract_pipeline.run("test.docx")
+    except Exception as e:
+        return
+    
 
-   
 if __name__ == "__main__":
     main()
